@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit {
   isOpenOverlayAvatar = false;
   isOpenOverlayBoards = false;
 
-  user: User | null;
+  user: User | null = null;
 
   constructor(
     private authService: AuthService,
