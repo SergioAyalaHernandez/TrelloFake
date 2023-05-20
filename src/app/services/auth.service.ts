@@ -68,11 +68,7 @@ export class AuthService {
     const token = this.tokenService.getToken();
     return this.http.get<User>(this.apiUrl + "/api/v1/auth/profile", {
       context: checkToken()
-    }).pipe(
-      tap(user => {
-        this.user$.next(user);
-      })
-    )
+    })
   }
 
   logout() {
