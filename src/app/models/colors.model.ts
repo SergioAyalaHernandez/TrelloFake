@@ -1,6 +1,7 @@
 export type Colors = 'sky' | 'yellow' | 'green' | 'red' | 'violet' | 'gray' | 'success' | 'primary' | 'danger' | 'light';
 
-export const COLORS = {
+export type ObjColors = Record<string, Record<string, boolean>>;
+export const COLORS: ObjColors = {
   success: {
     'bg-success-700': true,
     'hover:bg-success-800': true,

@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Dialog } from '@angular/cdk/dialog';
-import { TodoDialogComponent } from '@boards/components/todo-dialog/todo-dialog.component';
+import {Dialog} from '@angular/cdk/dialog';
+import {TodoDialogComponent} from '@boards/components/todo-dialog/todo-dialog.component';
 
-import { ToDo, Column } from '@models/todo.model';
+import {ToDo, Column} from '@models/todo.model';
+import {ActivatedRoute} from "@angular/router";
+import {BoardService} from "@services/board.service";
+import {Board} from "@models/board.model";
 
 @Component({
   selector: 'app-board',
@@ -17,13 +20,16 @@ import { ToDo, Column } from '@models/todo.model';
       .cdk-drop-list-dragging .cdk-drag {
         transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
       }
+
       .cdk-drag-animating {
         transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
       }
     `,
   ],
 })
-export class BoardComponent {
+export class BoardComponent implements OnInit {
+
+  board: Board | null = null;
   columns: Column[] = [
     {
       title: 'ToDo',
@@ -62,7 +68,20 @@ export class BoardComponent {
   doing: ToDo[] = [];
   done: ToDo[] = [];
 
-  constructor(private dialog: Dialog) {}
+  constructor(
+    private dialog: Dialog,
+    private route: ActivatedRoute,
+    private boardService: BoardService) {
+  }
+
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.getBoard(id);
+      }
+    })
+  }
 
   drop(event: CdkDragDrop<ToDo[]>) {
     if (event.previousContainer === event.container) {
@@ -99,5 +118,13 @@ export class BoardComponent {
     dialogRef.closed.subscribe((output) => {
       console.log(output);
     });
+  }
+
+  private getBoard(id: string) {
+    this.boardService.getBoard(id).subscribe(
+      board =>{
+          this.board = board;
+      }
+    )
   }
 }

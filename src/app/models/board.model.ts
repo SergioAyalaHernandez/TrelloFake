@@ -6,4 +6,5 @@ export interface Board{
   title: string;
   backgroundColor: Colors;
   members: User[];
+  lists : List
 }
