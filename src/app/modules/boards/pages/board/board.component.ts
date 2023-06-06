@@ -11,6 +11,9 @@ import {ToDo, Column} from '@models/todo.model';
 import {ActivatedRoute} from "@angular/router";
 import {BoardService} from "@services/board.service";
 import {Board} from "@models/board.model";
+import {Card} from "@models/Card.model";
+import {CardService} from "@services/card.service";
+import {subscribeOn} from "rxjs";
 
 @Component({
   selector: 'app-board',
@@ -30,39 +33,7 @@ import {Board} from "@models/board.model";
 export class BoardComponent implements OnInit {
 
   board: Board | null = null;
-  columns: Column[] = [
-    {
-      title: 'ToDo',
-      todos: [
-        {
-          id: '1',
-          title: 'Make dishes',
-        },
-        {
-          id: '2',
-          title: 'Buy a unicorn',
-        },
-      ],
-    },
-    {
-      title: 'Doing',
-      todos: [
-        {
-          id: '3',
-          title: 'Watch Angular Path in Platzi',
-        },
-      ],
-    },
-    {
-      title: 'Done',
-      todos: [
-        {
-          id: '4',
-          title: 'Play video games',
-        },
-      ],
-    },
-  ];
+
 
   todos: ToDo[] = [];
   doing: ToDo[] = [];
@@ -71,7 +42,8 @@ export class BoardComponent implements OnInit {
   constructor(
     private dialog: Dialog,
     private route: ActivatedRoute,
-    private boardService: BoardService) {
+    private boardService: BoardService,
+    private cardService: CardService) {
   }
 
   ngOnInit() {
@@ -83,7 +55,7 @@ export class BoardComponent implements OnInit {
     })
   }
 
-  drop(event: CdkDragDrop<ToDo[]>) {
+  drop(event: CdkDragDrop<Card[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -98,6 +70,9 @@ export class BoardComponent implements OnInit {
         event.currentIndex
       );
     }
+    const position = this.boardService.getPosition(event.container.data, event.currentIndex);
+    const card = event.container.data[event.currentIndex];
+    this.updateCard(card, position);
   }
 
   addColumn() {
@@ -107,12 +82,12 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  openDialog(todo: ToDo) {
+  openDialog(card: Card) {
     const dialogRef = this.dialog.open(TodoDialogComponent, {
       minWidth: '300px',
       maxWidth: '50%',
       data: {
-        todo: todo,
+        card: card,
       },
     });
     dialogRef.closed.subscribe((output) => {
@@ -122,9 +97,15 @@ export class BoardComponent implements OnInit {
 
   private getBoard(id: string) {
     this.boardService.getBoard(id).subscribe(
-      board =>{
-          this.board = board;
+      board => {
+        this.board = board;
       }
     )
+  }
+
+  private updateCard(card: Card, position: number) {
+    this.cardService.update(card.id, {position}).subscribe((cardUpdate) => {
+      console.log(cardUpdate);
+    })
   }
 }

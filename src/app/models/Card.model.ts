@@ -5,4 +5,14 @@ export interface Card{
   title: string;
   position: number;
   list: List;
+  description: string;
+}
+
+
+export interface UpdateCardDto{
+  title?: string;
+  description?: string;
+  position?: number;
+  listId?: string;
+  boardId?: string;
 }
