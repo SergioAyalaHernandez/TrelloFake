@@ -34,6 +34,7 @@ export class BoardComponent implements OnInit {
 
   board: Board | null = null;
 
+  columns: Column[] = [];
 
   todos: ToDo[] = [];
   doing: ToDo[] = [];
